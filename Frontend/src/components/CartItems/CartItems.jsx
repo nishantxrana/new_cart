@@ -154,7 +154,7 @@ function CartItems() {
               </div>
               <div className="flex justify-between">
                 <p>Tax (10%)</p>
-                <p>+ ${totalCartValue * 0.1}</p>
+                <p>+ ${(totalCartValue * 0.1).toFixed(2)}</p>
               </div>
               <div className="flex justify-between">
                 <p>Shipping fee</p>
