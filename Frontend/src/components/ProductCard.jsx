@@ -12,7 +12,7 @@ const ProductCard = ({ product, onAddToCartClick }) => {
       </div>
 
       <div className="p-4 space-y-2">
-        <h1 className="font-semibold text-2xl">{product.title}</h1>
+        <h1 className="font-semibold text-2xl">{product.name}</h1>
         <div className="flex items-center space-x-3">
           <p className="line-through italic text-gray-500">
             MRP: ${product.mrp}

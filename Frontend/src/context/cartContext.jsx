@@ -7,19 +7,29 @@ const CartContext = createContext();
 export const CartProvider = ({ children }) => {
   const [items, setItems] = useState([]);
   const [totalItemCount, setTotalItemCount] = useState(0);
-  
+  const [totalCartValue, setTotalCartValue] = useState(0);
 
-  
-  const addItemToCart = (id) => {
+  const updateTotalCartValue = (items) => {
+    const totalValue = items.reduce(
+      (total, item) => total + item.price * item.quantity,
+      0
+    );
+    setTotalCartValue(totalValue);
+  };
+
+  const addItemToCart = (id, price) => {
     setItems((prevItems) => {
       const existingItem = prevItems.find((item) => item.id === id);
+      let updatedItems;
       if (existingItem) {
-        return prevItems.map((item) =>
+        updatedItems = prevItems.map((item) =>
           item.id === id ? { ...item, quantity: item.quantity + 1 } : item
         );
       } else {
-        return [...prevItems, { id, quantity: 1 }];
+        updatedItems = [...prevItems, { id, price, quantity: 1 }];
       }
+      updateTotalCartValue(updatedItems);
+      return updatedItems;
     });
     setTotalItemCount((prevCount) => prevCount + 1);
   };
@@ -28,8 +38,10 @@ export const CartProvider = ({ children }) => {
     setItems((prevItems) => {
       const itemToRemove = prevItems.find((item) => item.id === id);
       if (itemToRemove) {
+        const updatedItems = prevItems.filter((item) => item.id !== id);
         setTotalItemCount((prevCount) => prevCount - itemToRemove.quantity);
-        return prevItems.filter((item) => item.id !== id);
+        updateTotalCartValue(updatedItems);
+        return updatedItems;
       }
       return prevItems;
     });
@@ -39,13 +51,15 @@ export const CartProvider = ({ children }) => {
     setItems((prevItems) => {
       const existingItem = prevItems.find((item) => item.id === id);
       if (existingItem && existingItem.quantity > 1) {
-        return prevItems.map((item) =>
+        const updatedItems = prevItems.map((item) =>
           item.id === id ? { ...item, quantity: item.quantity - 1 } : item
         );
+        setTotalItemCount((prevCount) => prevCount - 1);
+        updateTotalCartValue(updatedItems);
+        return updatedItems;
       }
       return prevItems;
     });
-    setTotalItemCount((prevCount) => prevCount - 1);
   };
 
   return (
@@ -53,6 +67,7 @@ export const CartProvider = ({ children }) => {
       value={{
         items,
         totalItemCount,
+        totalCartValue,
         addItemToCart,
         removeItemFromCart,
         reduceItemQuantity,

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { useCart } from "../context/cartContext";
 
 const CartIcon = ({ size, color }) => {
   return (
@@ -69,11 +70,15 @@ const NavList = ({ mobileNav, onClose }) => {
 
 const Navbar = () => {
   const [showNav, setShowNav] = useState(false);
+  const {totalCartValue,totalItemCount} = useCart();
+  console.log(totalCartValue);
+  
   const cartItems = 10;
 
   const toggleMobileNav = () => {
     setShowNav(!showNav);
   };
+  
 
   return (
     <>
@@ -96,14 +101,14 @@ const Navbar = () => {
           )}
 
           <div className="flex items-center space-x-8">
-            <p className="font-bold text-gray-800">$867.98</p>
+            <p className="font-bold text-gray-800">${totalCartValue }</p>
 
             <Link to="/cart">
               <button className="bg-gray-200 p-3 rounded-full relative">
                 <CartIcon color="#011627" size={16} />
                 {cartItems > 0 ? (
                   <div className="font-semibold absolute text-white bg-orange-600 text-xs w-6 h-6 rounded-full flex items-center justify-center -top-2 -right-2 bg-opacity-70">
-                    <p>{cartItems >= 9 ? "9+" : cartItems}</p>
+                    <p>{totalItemCount}</p>
                   </div>
                 ) : null}
               </button>

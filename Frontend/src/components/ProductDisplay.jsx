@@ -21,8 +21,8 @@ function ProductDisplay() {
     getProducts();
   }, []);
 
-  const onAddToCartClick = (id) => {
-    addItemToCart(id);
+  const onAddToCartClick = (product) => {
+    addItemToCart(product.id, product.salePrice);
   };
 
   return (
@@ -44,7 +44,7 @@ function ProductDisplay() {
                 key={index}
                 product={product}
                 onAddToCartClick={() => {
-                  onAddToCartClick(product.id);
+                  onAddToCartClick(product);
                 }}
               />
             );
