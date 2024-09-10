@@ -71,7 +71,6 @@ const NavList = ({ mobileNav, onClose }) => {
 const Navbar = () => {
   const [showNav, setShowNav] = useState(false);
   const {totalCartValue,totalItemCount} = useCart();
-  console.log(totalCartValue);
   
   const cartItems = 10;
 

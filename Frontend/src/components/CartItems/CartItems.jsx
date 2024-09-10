@@ -106,7 +106,7 @@ function CartItems() {
                       onClick={() => {
                         reduceItemQuantity(product.id);
                       }}
-                      className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-200 text-lg font-medium"
+                      className="w-8 h-8 aspect-square flex items-center justify-center rounded-full bg-gray-200 text-lg font-medium"
                     >
                       -
                     </button>
@@ -115,7 +115,9 @@ function CartItems() {
                     </span>
                     <button
                       onClick={() => {
-                        addItemToCart(product.id, product.price);
+                        addItemToCart(product.id, product.salePrice);
+                        console.log("logging", product.id, product.salePrice);
+                        
                       }}
                       className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-200 text-lg font-medium"
                     >

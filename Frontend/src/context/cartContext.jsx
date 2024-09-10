@@ -10,31 +10,24 @@ export const CartProvider = ({ children }) => {
   const [totalItemCount, setTotalItemCount] = useState(0);
   const [totalCartValue, setTotalCartValue] = useState(0);
 
-  // loading the cart items form mongoDB as soon as component mounts
-  useEffect(() => {
-    async function fetchCart() {
-      try {
-        const response = await axios.get(
-          "http://localhost:3005/api/cart/getAll"
-        );
-        if (response.data) {
-          setItems(response.data.items);
-          setTotalItemCount(response.data.totalItemCount);
-          setTotalCartValue(response.data.totalCartValue);
-        }
-      } catch (error) {
-        console.error("error in fetching cart items in cart context", error);
+  // Function to fetch cart data from the backend
+  const fetchCart = async () => {
+    try {
+      const response = await axios.get("http://localhost:3005/api/cart/getAll");
+      if (response.data) {
+        setItems(response.data.items);
+        setTotalItemCount(response.data.totalItemCount);
+        setTotalCartValue(response.data.totalCartValue);
       }
+    } catch (error) {
+      console.error("Error in fetching cart items in cart context", error);
     }
+  };
+
+  // Load cart data from MongoDB as soon as the component mounts
+  useEffect(() => {
     fetchCart();
   }, []);
-
-  // checking with useeffect if the fetch function is working
-  useEffect(() => {
-    console.log("items", items);
-    console.log("totalItemCount", totalItemCount);
-    console.log("totalCartValue", totalCartValue);
-  }, [items, totalItemCount, totalCartValue]);
 
   const updateTotalCartValue = (items) => {
     const totalValue = items.reduce(
@@ -44,88 +37,68 @@ export const CartProvider = ({ children }) => {
     setTotalCartValue(totalValue);
   };
 
-  // const addItemToCart = (id, price) => {
-  //   setItems((prevItems) => {
-  //     const existingItem = prevItems.find((item) => item.id === id);
-  //     let updatedItems;
-  //     if (existingItem) {
-  //       updatedItems = prevItems.map((item) =>
-  //         item.id === id ? { ...item, quantity: item.quantity + 1 } : item
-  //       );
-  //     } else {
-  //       updatedItems = [...prevItems, { id, price, quantity: 1 }];
-  //     }
-  //     updateTotalCartValue(updatedItems);
-  //     return updatedItems;
-  //   });
-  //   setTotalItemCount((prevCount) => prevCount + 1);
-  // };
   const addItemToCart = async (id, price) => {
-    try {
-      const response = await axios.post(
-        "http://localhost:3005/api/cart/addItem",
-        { id, price }
+    const existingItem = items.find((item) => item.id === id);
+    let updatedItems;
+    if (existingItem) {
+      updatedItems = items.map((item) =>
+        item.id === id ? { ...item, quantity: item.quantity + 1 } : item
       );
-      setItems(response.data.items);
-      setTotalItemCount(response.data.totalItemCount);
-      setTotalCartValue(response.data.totalCartValue);
+    } else {
+      updatedItems = [...items, { id, price, quantity: 1 }];
+    }
+    setItems(updatedItems);
+    setTotalItemCount((prevCount) => prevCount + 1);
+    updateTotalCartValue(updatedItems);
+
+    try {
+      await axios.post("http://localhost:3005/api/cart/addItem", { id, price });
     } catch (error) {
       console.error("Error adding item to cart:", error);
+      // Revert state if the request fails
+      setItems(items);
+      setTotalItemCount((prevCount) => prevCount - 1);
+      updateTotalCartValue(items);
     }
   };
-
-  // const removeItemFromCart = (id) => {
-  //   setItems((prevItems) => {
-  //     const itemToRemove = prevItems.find((item) => item.id === id);
-  //     if (itemToRemove) {
-  //       const updatedItems = prevItems.filter((item) => item.id !== id);
-  //       setTotalItemCount((prevCount) => prevCount - itemToRemove.quantity);
-  //       updateTotalCartValue(updatedItems);
-  //       return updatedItems;
-  //     }
-  //     return prevItems;
-  //   });
-  // };
 
   const removeItemFromCart = async (id) => {
-    try {
-      const response = await axios.post(
-        "http://localhost:3005/api/cart/removeItem",
-        { id }
-      );
-      setItems(response.data.items);
-      setTotalItemCount(response.data.totalItemCount);
-      setTotalCartValue(response.data.totalCartValue);
-    } catch (error) {
-      console.error("Error removing item from cart:", error);
+    const itemToRemove = items.find((item) => item.id === id);
+    if (itemToRemove) {
+      const updatedItems = items.filter((item) => item.id !== id);
+      setItems(updatedItems);
+      setTotalItemCount((prevCount) => prevCount - itemToRemove.quantity);
+      updateTotalCartValue(updatedItems);
+
+      try {
+        await axios.post("http://localhost:3005/api/cart/removeItem", { id });
+      } catch (error) {
+        console.error("Error removing item from cart:", error);
+        setItems(items);
+        setTotalItemCount((prevCount) => prevCount + itemToRemove.quantity);
+        updateTotalCartValue(items);
+      }
     }
   };
 
-  // const reduceItemQuantity = (id) => {
-  //   setItems((prevItems) => {
-  //     const existingItem = prevItems.find((item) => item.id === id);
-  //     if (existingItem && existingItem.quantity > 1) {
-  //       const updatedItems = prevItems.map((item) =>
-  //         item.id === id ? { ...item, quantity: item.quantity - 1 } : item
-  //       );
-  //       setTotalItemCount((prevCount) => prevCount - 1);
-  //       updateTotalCartValue(updatedItems);
-  //       return updatedItems;
-  //     }
-  //     return prevItems;
-  //   });
-  // };
   const reduceItemQuantity = async (id) => {
-    try {
-      const response = await axios.post(
-        "http://localhost:3005/api/cart/reduceItemQuantity",
-        { id }
+    const existingItem = items.find((item) => item.id === id);
+    if (existingItem && existingItem.quantity > 1) {
+      const updatedItems = items.map((item) =>
+        item.id === id ? { ...item, quantity: item.quantity - 1 } : item
       );
-      setItems(response.data.items);
-      setTotalItemCount(response.data.totalItemCount);
-      setTotalCartValue(response.data.totalCartValue);
-    } catch (error) {
-      console.error("Error reducing item quantity:", error);
+      setItems(updatedItems);
+      setTotalItemCount((prevCount) => prevCount - 1);
+      updateTotalCartValue(updatedItems);
+
+      try {
+        await axios.post("http://localhost:3005/api/cart/reduceItemQuantity", { id });
+      } catch (error) {
+        console.error("Error reducing item quantity:", error);
+        setItems(items);
+        setTotalItemCount((prevCount) => prevCount + 1);
+        updateTotalCartValue(items);
+      }
     }
   };
 
