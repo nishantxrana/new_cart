@@ -15,7 +15,6 @@ dotenv.config({
 
 const PORT = process.env.PORT || 5000;
 
-// comment out due to frq db connection req will use later
 databaseConnect()
   .then(() => {
     app.listen(PORT, () => {
