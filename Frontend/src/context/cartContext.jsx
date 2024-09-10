@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 
 // Create a context
 const CartContext = createContext();
@@ -7,7 +7,9 @@ const CartContext = createContext();
 export const CartProvider = ({ children }) => {
   const [items, setItems] = useState([]);
   const [totalItemCount, setTotalItemCount] = useState(0);
+  
 
+  
   const addItemToCart = (id) => {
     setItems((prevItems) => {
       const existingItem = prevItems.find((item) => item.id === id);
