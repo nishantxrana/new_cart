@@ -14,6 +14,33 @@ function CartItems() {
   } = useCart();
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [couponCode, setCouponCode] = useState("");
+  const [discount, setDiscount] = useState(0);
+  const [totalValue, setTotalValue] = useState(0);
+  
+  
+  const[discountedTotal, setDiscountedTotal] = useState(0);
+  const coupons = {
+    SAVE10: 10,
+    SAVE20: 20,
+    SAVE30: 30,
+  };
+
+  const handleApplyCoupon = () => {
+    if (coupons[couponCode]) {
+      setDiscount(coupons[couponCode]);
+    } else {
+      alert("Invalid coupon code");
+      setDiscount(0);
+    }
+  };
+  useEffect(() => {
+    setTotalValue(totalCartValue + (totalCartValue * 0.1));
+  }, [totalCartValue]);
+  useEffect(() => {
+    setDiscountedTotal(totalValue * (discount / 100));
+  }, [discount, totalValue]);
+  
 
   async function getCartItemsById() {
     try {
@@ -66,16 +93,27 @@ function CartItems() {
   if (items && items.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[calc(100vh-15rem)] bg-gray-50">
-        <img src="https://via.placeholder.com/150" alt="Empty Cart" className="mb-6 w-40 h-40 object-contain" />
-        <h2 className="text-3xl font-bold text-gray-800 mb-2">Your Cart is Empty</h2>
-        <p className="text-gray-500 mb-6">Looks like you haven't added anything to your cart yet.</p>
-        <button onClick={()=>window.location.replace('/')} className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg shadow-lg transition-colors">
+        <img
+          src="https://via.placeholder.com/150"
+          alt="Empty Cart"
+          className="mb-6 w-40 h-40 object-contain"
+        />
+        <h2 className="text-3xl font-bold text-gray-800 mb-2">
+          Your Cart is Empty
+        </h2>
+        <p className="text-gray-500 mb-6">
+          Looks like you haven't added anything to your cart yet.
+        </p>
+        <button
+          onClick={() => window.location.replace("/")}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg shadow-lg transition-colors"
+        >
           Start Shopping
         </button>
       </div>
     );
   }
-  
+
   return (
     <>
       <div className="container mx-auto mt-10 mb-32 px-4 md:px-16 ">
@@ -117,7 +155,6 @@ function CartItems() {
                       onClick={() => {
                         addItemToCart(product.id, product.salePrice);
                         console.log("logging", product.id, product.salePrice);
-                        
                       }}
                       className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-200 text-lg font-medium"
                     >
@@ -150,7 +187,7 @@ function CartItems() {
             <div className="space-y-4">
               <div className="flex justify-between">
                 <p>Subtotal</p>
-                <p>${totalCartValue}</p>
+                <p>${totalCartValue.toFixed(2)}</p>
               </div>
               <div className="flex justify-between">
                 <p>Tax (10%)</p>
@@ -162,7 +199,7 @@ function CartItems() {
               </div>
               <div className="flex justify-between text-xl font-semibold">
                 <h3>Total</h3>
-                <h3>${totalCartValue + totalCartValue * 0.1}</h3>
+                <h3 >${((totalCartValue + totalCartValue * 0.1)- discountedTotal).toFixed(2)}</h3>
               </div>
             </div>
             <button className="w-full py-3 bg-black text-white mt-6 uppercase">
@@ -177,10 +214,22 @@ function CartItems() {
               <input
                 type="text"
                 placeholder="Enter code"
+                value={couponCode}
+                onChange={(e) => setCouponCode(e.target.value)}
                 className="flex-1 p-4 bg-transparent outline-none"
               />
-              <button className="p-4 bg-black text-white">Apply</button>
+              <button
+                onClick={handleApplyCoupon}
+                className="p-4 bg-black text-white"
+              >
+                Apply
+              </button>
             </div>
+            {discount > 0 && (
+              <p className="mt-4 text-green-500">
+                Coupon applied! You saved {discount}% on your total.
+              </p>
+            )}
           </div>
         </div>
       </div>
