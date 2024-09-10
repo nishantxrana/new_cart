@@ -63,7 +63,7 @@ function CartItems() {
       </div>
     );
   }
-  if (items.length === 0) {
+  if (items && items.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[calc(100vh-15rem)] bg-gray-50">
         <img src="https://via.placeholder.com/150" alt="Empty Cart" className="mb-6 w-40 h-40 object-contain" />
