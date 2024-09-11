@@ -71,7 +71,7 @@ npm run dev
 
 ### Retrieve Product by id
 
-- **GET** localhost:3005/api/products/getProductById
+- **POST** localhost:3005/api/products/getProductById
 
 #### Add Products
 
