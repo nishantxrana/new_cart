@@ -37,6 +37,7 @@ const Logo = ({ color }) => {
 };
 
 const NavList = ({ mobileNav, onClose }) => {
+  const [activeTab, setActiveTab] = useState("home");
   return (
     <ul className="lg:w-1/2 md:w-[75%] w-full mx-auto md:space-y-0 space-y-10 flex items-center justify-between md:flex-row flex-col font-semibold">
       {mobileNav ? (
@@ -49,20 +50,39 @@ const NavList = ({ mobileNav, onClose }) => {
         </button>
       ) : null}
 
-      <li className="text-orange-600">
+      <li
+        onClick={() => {
+          setActiveTab("home");
+        }}
+        className={` ${activeTab == "home" ? "text-orange-600" : "text-black"}`}
+      >
         <Link to="/">Home</Link>
       </li>
-      <li>
-        <Link to="/shop">Shop</Link>
+      <li
+        onClick={() => {
+          setActiveTab("men");
+        }}
+        className={` ${activeTab == "men" ? "text-orange-600" : "text-black"}`}
+      >
+        <Link to="/men">Men</Link>
       </li>
-      <li>
-        <Link to="#">Blogs</Link>
+      <li
+        onClick={() => {
+          setActiveTab("women");
+        }}
+        className={` ${
+          activeTab == "women" ? "text-orange-600" : "text-black"
+        }`}
+      >
+        <Link to="/women">Women</Link>
       </li>
-      <li>
-        <Link to="#">About</Link>
-      </li>
-      <li>
-        <Link to="#">Contact</Link>
+      <li
+        onClick={() => {
+          setActiveTab("kids");
+        }}
+        className={` ${activeTab == "kids" ? "text-orange-600" : "text-black"}`}
+      >
+        <Link to="/kids">Kids</Link>
       </li>
     </ul>
   );
@@ -70,14 +90,13 @@ const NavList = ({ mobileNav, onClose }) => {
 
 const Navbar = () => {
   const [showNav, setShowNav] = useState(false);
-  const {totalCartValue,totalItemCount} = useCart();
-  
+  const { totalCartValue, totalItemCount } = useCart();
+
   const cartItems = 10;
 
   const toggleMobileNav = () => {
     setShowNav(!showNav);
   };
-  
 
   return (
     <>
@@ -100,7 +119,7 @@ const Navbar = () => {
           )}
 
           <div className="flex items-center space-x-8">
-            <p className="font-bold text-gray-800">${totalCartValue }</p>
+            <p className="font-bold text-gray-800">${totalCartValue}</p>
 
             <Link to="/cart">
               <button className="bg-gray-200 p-3 rounded-full relative">

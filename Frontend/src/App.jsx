@@ -3,13 +3,12 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import ProductDisplay from "./components/ProductDisplay";
 import CartItems from "./components/CartItems/CartItems";
+import Category from "./components/Category";
 
 
-const Home = () => <div>Home Page</div>;
-const Shop = () => <div>Shop Page</div>;
-const Blogs = () => <div>Blogs Page</div>;
-const About = () => <div>About Page</div>;
-const Contact = () => <div>Contact Page</div>;
+const Men = () => <div>men section</div>;
+const Women = () => <div>women section</div>;
+const Kids = () => <div>kids</div>;
 
 const App = () => {
   return (
@@ -18,10 +17,9 @@ const App = () => {
         <Navbar />
         <Routes>
           <Route path="/" element={<ProductDisplay />} />
-          <Route path="/shop" element={<Shop />} />
-          <Route path="/blogs" element={<Blogs />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
+          <Route path="/men" element={<Category category="men"/>} />
+          <Route path="/women" element={<Category category="women"/>} />
+          <Route path="/Kids" element={<Category category="kids"/>} />
           <Route path="/cart" element={<CartItems />} />
         </Routes>
       </div>

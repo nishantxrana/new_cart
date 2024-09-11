@@ -2,7 +2,7 @@ import ProductCard from "./ProductCard.jsx";
 import { useEffect, useState } from "react";
 import { useCart } from "../context/cartContext.jsx";
 
-function ProductDisplay() {
+function Category(prop) {
   const [products, setProducts] = useState([]);
   const { items, addItemToCart } = useCart();
 
@@ -12,13 +12,16 @@ function ProductDisplay() {
         await fetch("/api/products/getAllProducts")
           .then((response) => response.json())
           .then((dataArr) => dataArr.products)
+          .then((data) =>
+            data.filter((product) => product.category === prop.category)
+          )
           .then((data) => setProducts(data));
       } catch (error) {
         console.log(error);
       }
     }
     getProducts();
-  }, []);
+  }, [prop.category]);
 
   const onAddToCartClick = (product) => {
     addItemToCart(product.id, product.salePrice);
@@ -36,7 +39,7 @@ function ProductDisplay() {
       )}
 
       <div className="max-w-7xl mx-auto p-9">
-        <div className="grid vsm:grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
           {products.map((product, index) => {
             return (
               <ProductCard
@@ -54,4 +57,4 @@ function ProductDisplay() {
   );
 }
 
-export default ProductDisplay;
+export default Category;
