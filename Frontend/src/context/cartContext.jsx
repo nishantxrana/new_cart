@@ -13,7 +13,7 @@ export const CartProvider = ({ children }) => {
   // Function to fetch cart data from the backend
   const fetchCart = async () => {
     try {
-      const response = await axios.get("http://localhost:3005/api/cart/getAll");
+      const response = await axios.get("/api/cart/getAll");
       if (response.data) {
         setItems(response.data.items);
         setTotalItemCount(response.data.totalItemCount);
@@ -52,7 +52,7 @@ export const CartProvider = ({ children }) => {
     updateTotalCartValue(updatedItems);
 
     try {
-      await axios.post("http://localhost:3005/api/cart/addItem", { id, price });
+      await axios.post("/api/cart/addItem", { id, price });
     } catch (error) {
       console.error("Error adding item to cart:", error);
       // Revert state if the request fails
@@ -71,7 +71,7 @@ export const CartProvider = ({ children }) => {
       updateTotalCartValue(updatedItems);
 
       try {
-        await axios.post("http://localhost:3005/api/cart/removeItem", { id });
+        await axios.post("/api/cart/removeItem", { id });
       } catch (error) {
         console.error("Error removing item from cart:", error);
         setItems(items);
@@ -92,7 +92,7 @@ export const CartProvider = ({ children }) => {
       updateTotalCartValue(updatedItems);
 
       try {
-        await axios.post("http://localhost:3005/api/cart/reduceItemQuantity", { id });
+        await axios.post("/api/cart/reduceItemQuantity", { id });
       } catch (error) {
         console.error("Error reducing item quantity:", error);
         setItems(items);

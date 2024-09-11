@@ -1,5 +1,4 @@
 import ProductCard from "./ProductCard.jsx";
-import { products } from "../assets/testdata.js";
 import { useEffect, useState } from "react";
 import { useCart } from "../context/cartContext.jsx";
 
@@ -10,7 +9,7 @@ function ProductDisplay() {
   useEffect(() => {
     async function getProducts() {
       try {
-        await fetch("http://localhost:3005/api/products/getAllProducts")
+        await fetch("/api/products/getAllProducts")
           .then((response) => response.json())
           .then((dataArr) => dataArr.products)
           .then((data) => setProducts(data));

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import remove_icon from "../../assets/cart_cross_icon.png";
-import { products as all_product } from "../../assets/testdata.js";
 import { useCart } from "../../context/cartContext.jsx";
+import empty_cart from "../../assets/empty_cart.png";
 
 function CartItems() {
   const {
@@ -17,9 +17,9 @@ function CartItems() {
   const [couponCode, setCouponCode] = useState("");
   const [discount, setDiscount] = useState(0);
   const [totalValue, setTotalValue] = useState(0);
-  
-  
-  const[discountedTotal, setDiscountedTotal] = useState(0);
+  const [invalidCoupon, setInvalidCoupon] = useState(false);
+
+  const [discountedTotal, setDiscountedTotal] = useState(0);
   const coupons = {
     SAVE10: 10,
     SAVE20: 20,
@@ -29,18 +29,18 @@ function CartItems() {
   const handleApplyCoupon = () => {
     if (coupons[couponCode]) {
       setDiscount(coupons[couponCode]);
+      setInvalidCoupon(false);
     } else {
-      alert("Invalid coupon code");
+      setInvalidCoupon(true);
       setDiscount(0);
     }
   };
   useEffect(() => {
-    setTotalValue(totalCartValue + (totalCartValue * 0.1));
+    setTotalValue(totalCartValue + totalCartValue * 0.1);
   }, [totalCartValue]);
   useEffect(() => {
     setDiscountedTotal(totalValue * (discount / 100));
   }, [discount, totalValue]);
-  
 
   async function getCartItemsById() {
     try {
@@ -94,7 +94,7 @@ function CartItems() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[calc(100vh-15rem)] bg-gray-50">
         <img
-          src="https://via.placeholder.com/150"
+          src={empty_cart}
           alt="Empty Cart"
           className="mb-6 w-40 h-40 object-contain"
         />
@@ -138,7 +138,7 @@ function CartItems() {
                     className="w-16 h-16 object-cover"
                   />
                   <p>{product.name}</p>
-                  <p className="text-center">${product.salePrice}</p>
+                  <p className="text-center">${product.salePrice.toFixed(2)}</p>
                   <div className="flex items-center justify-center space-x-2">
                     <button
                       onClick={() => {
@@ -154,7 +154,6 @@ function CartItems() {
                     <button
                       onClick={() => {
                         addItemToCart(product.id, product.salePrice);
-                        console.log("logging", product.id, product.salePrice);
                       }}
                       className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-200 text-lg font-medium"
                     >
@@ -180,7 +179,7 @@ function CartItems() {
           })}
         </div>
 
-        <div className="flex flex-col md:flex-row mt-16 gap-16">
+        <div className="flex flex-col-reverse md:flex-row mt-16 gap-16">
           {/* Total Section */}
           <div className="flex-1 space-y-4">
             <h1 className="text-2xl font-semibold">Cart Total</h1>
@@ -197,9 +196,20 @@ function CartItems() {
                 <p>Shipping fee</p>
                 <p>Free</p>
               </div>
+              <div className="flex justify-between">
+                <p>Discount ({discount}%)</p>
+                <p>- ${discountedTotal}</p>
+              </div>
               <div className="flex justify-between text-xl font-semibold">
                 <h3>Total</h3>
-                <h3 >${((totalCartValue + totalCartValue * 0.1)- discountedTotal).toFixed(2)}</h3>
+                <h3>
+                  $
+                  {(
+                    totalCartValue +
+                    totalCartValue * 0.1 -
+                    discountedTotal
+                  ).toFixed(2)}
+                </h3>
               </div>
             </div>
             <button className="w-full py-3 bg-black text-white mt-6 uppercase">
@@ -229,6 +239,9 @@ function CartItems() {
               <p className="mt-4 text-green-500">
                 Coupon applied! You saved {discount}% on your total.
               </p>
+            )}
+            {invalidCoupon && (
+              <p className="mt-4 text-red-500">Invalid coupon code.</p>
             )}
           </div>
         </div>

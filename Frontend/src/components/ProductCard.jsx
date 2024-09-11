@@ -21,7 +21,7 @@ const ProductCard = ({ product, onAddToCartClick }) => {
         </div>
       </div>
 
-      <span className="absolute top-2 right-2 font-semibold bg-orange-600 p-2 rounded-md inline-block text-sm text-white shadow-md">
+      <span className="absolute top-2 right-2 font-semibold bg-gray-900 p-2 rounded-md inline-block text-sm text-white shadow-md">
         {product.percentOff}% Off
       </span>
 
